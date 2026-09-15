@@ -1,0 +1,6 @@
+require('guess-indent-plugin')
+require('gitsigns-plugin')
+require('which-key-plugin')
+require('colorscheme-plugin')
+require('todo-comments-plugin')
+require('nvim-mini-plugin')
