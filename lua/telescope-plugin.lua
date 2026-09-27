@@ -51,6 +51,11 @@ do
     --   },
     -- },
     -- pickers = {}
+    pickers = {
+        find_files = { mappings = { i = { ['<CR>'] = require('telescope.actions').select_tab_drop } } },
+        buffers    = { mappings = { i = { ['<CR>'] = require('telescope.actions').select_tab_drop } } },
+        oldfiles   = { mappings = { i = { ['<CR>'] = require('telescope.actions').select_tab_drop } } },
+    },
     extensions = {
       ['ui-select'] = { require('telescope.themes').get_dropdown() },
     },

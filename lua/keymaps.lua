@@ -65,6 +65,21 @@ do
   -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
   -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+  -- Tabs
+  for i = 1, 9 do
+    vim.keymap.set('n', '<A-' .. i .. '>', i .. 'gt', { desc = 'Go to tab ' .. i })
+  end
+  vim.keymap.set('n', '<A-l>', 'gt', { desc = 'Next tab' })
+  vim.keymap.set('n', '<A-h>', 'gT', { desc = 'Prev tab' })
+
+  -- Splits
+  vim.keymap.set('n', '<leader>v', '<C-w>v', { desc = 'Split right' })
+  vim.keymap.set('n', '<leader>T', '<C-w>T', { desc = 'Move window to new tab' })
+
+  -- Close
+  vim.keymap.set('n', '<leader>x', '<cmd>confirm q<CR>', { desc = 'Close window/tab' })
+  vim.keymap.set('n', '<leader>X', '<cmd>confirm bdelete<CR>', { desc = 'Close buffer' })
+
   -- [[ Basic Autocommands ]]
   --  See `:help lua-guide-autocommands`
 
@@ -77,3 +92,25 @@ do
     callback = function() vim.hl.on_yank() end,
   })
 end
+
+local function tab_to_split(dir, vertical)
+  if vim.fn.tabpagenr('$') == 1 then
+    return vim.notify('only one tab', vim.log.levels.WARN)
+  end
+  local buf  = vim.api.nvim_get_current_buf()
+  local view = vim.fn.winsaveview()
+  local n    = vim.fn.tabpagenr()
+  local target = (dir == 'prev') and math.max(n - 1, 1) or n
+
+  vim.cmd('tabclose')
+  vim.cmd(target .. 'tabnext')
+  vim.cmd(vertical and 'vsplit' or 'split')
+  vim.api.nvim_win_set_buf(0, buf)
+  vim.fn.winrestview(view)
+end
+
+vim.api.nvim_create_user_command('TabToPrev', function() tab_to_split('prev', false) end, {})
+vim.api.nvim_create_user_command('TabToNext', function() tab_to_split('next', false) end, {})
+
+vim.keymap.set('n', '<leader>wp', '<cmd>TabToPrev<cr>', { desc = 'Tab -> split in prev tab' })
+vim.keymap.set('n', '<leader>wn', '<cmd>TabToNext<cr>', { desc = 'Tab -> split in next tab' })
